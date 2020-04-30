@@ -1,6 +1,6 @@
 # DotNet Core Container to Fargate 
 
-TODO Steps
+1 - TODO Steps
 ```
 1. Create a sample CDK application
 2. Add some Nuget packages
@@ -14,32 +14,32 @@ TODO Steps
 10. Delete Everything
 ```
 
-Make a directory:
+2 - Make a directory:
 
 ```
 mkdir demoDotNetApplication
 ```
 
-Go into that directory:
+3 - Go into that directory:
 
 ```
 cd demoDotNetApplication
 ```
 
-Use CDK
+4 - Use CDK
 
 ```
 cdk init sample-app --language csharp
 ```
 
-Go back to the correct folder and open in Rider
+5 - Go back to the correct folder and open in Rider
 
 ```
 cd ../
 
 ```
 
-Add the following nuget packages
+6 - Add the following nuget packages
 
 ```
 using Amazon.CDK.AWS.EC2;
@@ -48,13 +48,13 @@ using Amazon.CDK.AWS.ECS.Patterns;
 
 ```
 
-Check the build
+7 - Check the build
 
 ```
 dotnet build src cdk synth
 ```
 
-Add VPC
+8 - Add VPC
 ```
 var vpc = new Vpc(this, "MyVpc", new VpcProps
 {
@@ -62,14 +62,14 @@ var vpc = new Vpc(this, "MyVpc", new VpcProps
 });
 ```
 
-Add a Cluster
+9 - Add a Cluster
 ```
 var cluster = new Cluster(this, "MyCluster", new ClusterProps
 {
     Vpc = vpc
 });
 ```
-Add a load balanced Fargate service
+10 - Add a load balanced Fargate service
 ```
 var serviceProps = new ApplicationLoadBalancedFargateServiceProps()
 {
@@ -88,36 +88,36 @@ new ApplicationLoadBalancedFargateService(this, "MyFargateService",
     serviceProps);
 ```
 
-Deploy and show the website working
+11 - Deploy and show the website working
 ```
 cdk deploy
 ```
 
-Explain that PHP is not what I want. I'd like DotNet.
+12 - Explain that PHP is not what I want. I'd like DotNet.
 
 ```
 dotnet new webapp -o Website 
 ```
 
-Go into Folder
+13 - Go into Folder
 
 ```
 cd Website
 ```
 
-Run the website 
+14 - Run the website 
 
 ```
 dotnet run
 ```
 
-Add Docker File
+15 - Add Docker File
 
 ```
 touch Dockerfile
 ```
 
-Add to Docker file
+16 - Add to Docker file
 
 ```
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
@@ -132,18 +132,18 @@ COPY --from=build /app .
 ENTRYPOINT [ "dotnet", "Website.dll" ]
 ```
 
-Create a task definition
+17 - Create a task definition
 ```
 var taskDefinition = new FargateTaskDefinition(this,"FargateTaskDefinition");
 ```
-Get a container from a folder
+18 - Get a container from a folder
 ```
 var containerOptions = new ContainerDefinitionOptions
 {
     Image = ContainerImage.FromAsset("Website")
 };
 ```
-Add Port Mapping
+19 - Add Port Mapping
 ```
 var portMapping = new PortMapping()
 {
@@ -151,23 +151,23 @@ var portMapping = new PortMapping()
     HostPort = 80
 };
 ```
-Add the container to the definition and add the port mapping
+20 - Add the container to the definition and add the port mapping
 ```
 taskDefinition
     .AddContainer("Container", containerOptions)
     .AddPortMappings(portMapping);
 ```
-Replace TaskImageOptions with TaskDefinition
+21 - Replace TaskImageOptions with TaskDefinition
 ```
 TaskDefinition = taskDefinition,
 ```
-Add a certificate
+22 - Add a certificate
 ```
 Certificate = Certificate.FromCertificateArn(this, "MyCertificate", "arn:aws:acm:eu-west-1:365489315573:certificate/2141211b-630e-4fb5-a8ac-fff9cbcd65f3"),
                 
 ```
 
-Add a domain
+23 - Add a domain
 
 ```
 DomainName = "fargate.thebeebs.net",
@@ -177,7 +177,7 @@ DomainZone = new HostedZone(this,"myHostedZone",new HostedZoneProps
 })
 ```
 
-Delete the lot
+24 - Delete the lot
 
 ```
 cdk destroy
